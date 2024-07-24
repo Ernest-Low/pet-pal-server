@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  Male
+  Female
+}
+
+enum Size {
+  Small
+  Medium
+  Large
+}
+
+model owner {
+  ownerId Int @id @default(autoincrement()) /// Autoincrementing ID
+  areaLocation String @db.VarChar(100)      /// 100 Characters
+  ownerName String @db.VarChar(100)         /// 100 Characters
+  petPicture String[]                       /// TEXT
+  petName String @db.VarChar(100)           /// 100 Characters
+  petBreed String @db.VarChar(100)          /// 100 Characters
+  petGender Gender                          /// "Male" / "Female"
+  petAge Int                                /// Integer
+  petSize Size                              /// "Small" / "Medium" / "Large"
+  petDescription String                     /// TEXT
+  petIsNeutered Boolean                     /// Boolean
+  email String @db.VarChar(100) @unique     /// 100 Characters
+  password String @db.VarChar(100)          /// 100 Characters
+}
+
+// ownerId UUID PRIMARY KEY,
+// areaLocation VARCHAR(255),
+// ownerName VARCHAR(255),
+// petPicture TEXT,
+// petName VARCHAR(255),
+// petBreed VARCHAR(255),
+// petGender pet_gender,
+// petAge INTEGER,
+// petSize pet_size,
+// petDescription TEXT,
+// petIsNeutered BOOLEAN
