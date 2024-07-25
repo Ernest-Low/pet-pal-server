@@ -3,27 +3,27 @@ import jwt from "jsonwebtoken";
 import { config } from "../config/config";
 
 interface UserPayload {
-  username: string;
+  email: string;
   iat: number;
   exp: number;
 }
 
 declare module "express-serve-static-core" {
   interface Request {
-    user?: UserPayload;
+    email?: UserPayload;
   }
 }
 
 // Middleware to authenticate the token
 const AuthCheck = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  // const authHeader = req.headers["authorization"];     // JWT not being placed in headers
+  // const token = authHeader && authHeader.split(" ")[1];
+  const token: string = req.body.jwtToken;
+  if (!token) return res.json({ status: "401: No token" });
 
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, config.AUTH_KEY, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user as UserPayload;
+  jwt.verify(token, config.AUTH_KEY, (err, email) => {
+    if (err) return res.json({ status: "403: Token Forbidden" });
+    req.email = email as UserPayload;
     next();
   });
 };

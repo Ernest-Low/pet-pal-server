@@ -17,7 +17,7 @@ const RegisterController = async (req: Request, res: Response) => {
     }));
 
     return res.status(400).json({
-      message: "Validation failed",
+      status: "Validation failed",
       errors: errorDetails,
     });
   }
@@ -44,7 +44,7 @@ const RegisterController = async (req: Request, res: Response) => {
   });
 
   if (foundUser) {
-    return res.status(400).send("User already exists");
+    return res.status(400).json({ status: "User already exists" });
   }
 
   try {
@@ -64,10 +64,22 @@ const RegisterController = async (req: Request, res: Response) => {
         password: await argon2.hash(password),
       },
     });
-    res.status(201).send("User registered successfully");
+
+    const foundUser = await prisma.owner.findFirst({
+      where: {
+        email,
+      },
+    });
+    const { password: _, ...resUser } = foundUser!;
+    res
+      .status(201)
+      .json({
+        status: "User registered successfully",
+        payload: { owner: resUser },
+      });
   } catch (err) {
     console.error(err); // Log error for debugging
-    res.status(500).send("Error registering user");
+    res.status(500).json({ status: "Error registering user" });
   }
 };
 

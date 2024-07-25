@@ -10,20 +10,20 @@ const LoginController = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).send("Email and password are required");
+    return res.status(400).json({ status: "Email and password are required" });
   }
 
   const foundUser = await prisma.owner.findFirst({
     where: {
       email,
     },
-    select: {
-      password: true,
-    },
+    // select: {
+    //   password: true,
+    // },
   });
 
   if (!foundUser) {
-    return res.status(400).send("Invalid email or password");
+    return res.status(400).json({ status: "Invalid email or password" });
   }
 
   try {
@@ -32,12 +32,18 @@ const LoginController = async (req: Request, res: Response) => {
       const token = jwt.sign({ email: email }, secretKey, {
         expiresIn: "1h",
       });
-      res.status(200).json({ token });
+      const { password: _, ...resUser } = foundUser;
+      res
+        .status(200)
+        .json({
+          status: "Successfully logged in",
+          payload: { owner: resUser, jwtToken: token },
+        });
     } else {
-      res.status(400).send("Invalid email or password");
+      res.status(400).json({ status: "Invalid email or password" });
     }
   } catch (err) {
-    res.status(500).send("Error logging in user");
+    res.status(400).json({ status: "Error logging in user" });
   }
 };
 
