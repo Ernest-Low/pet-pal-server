@@ -43,15 +43,18 @@ const ViewPetsController = async (
 
     // Check if the requested page is out of range
     if (startIndex >= totalItems && totalItems > 0) {
-      return res.status(404).json({ error: "Page not found." });
+      return res.status(404).json({ status: "Page not found." });
     }
 
     // Send the paginated items as the response
-    return res.json({
-      length: owners.length,
-      page: currentPage,
-      totalPages: Math.ceil(totalItems / currentLimit),
-      owners,
+    return res.status(200).json({
+      status: "Retrieve owners success",
+      payload: {
+        length: owners.length,
+        page: currentPage,
+        totalPages: Math.ceil(totalItems / currentLimit),
+        owners,
+      },
     });
   } catch (error) {
     next(error); // Pass the error to the error-handling middleware
