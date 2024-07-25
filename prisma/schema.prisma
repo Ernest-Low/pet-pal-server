@@ -25,19 +25,20 @@ enum Size {
 }
 
 model owner {
-  ownerId Int @id @default(autoincrement()) /// Autoincrementing ID
-  areaLocation String @db.VarChar(100)      /// 100 Characters
-  ownerName String @db.VarChar(100)         /// 100 Characters
-  petPicture String[]                       /// TEXT
-  petName String @db.VarChar(100)           /// 100 Characters
-  petBreed String @db.VarChar(100)          /// 100 Characters
-  petGender Gender                          /// "Male" / "Female"
-  petAge Int                                /// Integer
-  petSize Size                              /// "Small" / "Medium" / "Large"
-  petDescription String                     /// TEXT
-  petIsNeutered Boolean                     /// Boolean
-  email String @db.VarChar(100) @unique     /// 100 Characters
-  password String @db.VarChar(100)          /// 100 Characters
+  ownerId Int @id @default(autoincrement()) @unique  /// Autoincrementing ID
+  areaLocation String @db.VarChar(100)               /// 100 Characters
+  ownerName String @db.VarChar(100)                  /// 100 Characters
+  petPicture String[]                                /// TEXT
+  petName String @db.VarChar(100)                    /// 100 Characters
+  petBreed String @db.VarChar(100)                   /// 100 Characters
+  petGender Gender                                   /// "Male" / "Female"
+  petAge Int                                         /// Integer
+  petSize Size                                       /// "Small" / "Medium" / "Large"
+  petDescription String                              /// TEXT
+  petIsNeutered Boolean                              /// Boolean
+  email String @db.VarChar(100) @unique              /// 100 Characters
+  ownerMatches Int[]                                 /// Populate with other owner IDs 
+  password String @db.VarChar(100)                   /// 100 Characters
 }
 
 // ownerId UUID PRIMARY KEY,

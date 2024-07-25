@@ -1,15 +1,61 @@
-import express, { Express, Request, Response } from "express";
-import dotenv from "dotenv";
-
-dotenv.config();
+import express, { Express } from "express";
+import { config } from "./config";
+import prisma from "../prisma/db/prisma";
+import {
+  LoginController,
+  RegisterController,
+  protectedRoute,
+} from "./controllers/Controllers";
+import AuthCheck from "./middleware/AuthCheck";
+import bodyParser from "body-parser";
 
 const app: Express = express();
-const port = process.env.PORT || 3000;
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript Server");
+// Middleware
+app.use(bodyParser.json());
+
+app.listen(config.PORT, () => {
+  console.log(`[server]: Server is running at http://localhost:${config.PORT}`);
 });
 
-app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
-});
+const main = async () => {
+  // const owners = await prisma.owner.findMany({
+  //   where: {
+  //     petAge: {
+  //       gt: 5,
+  //     },
+  //   },
+  //   select: {
+  //     petName: true,
+  //     petGender: true,
+  //     petAge: true,
+  //     areaLocation: true,
+  //     petPicture: true,
+  //   },
+  // });
+  // console.dir(owners);
+
+  // app.get("/", (req: Request, res: Response) => {
+  //   res.send("Express + TypeScript Server");
+  // });
+
+  app.post("/api/register", RegisterController); // ? Send Whole owner profile minus ownerMatches (don't save this in), return whole owner profile
+  app.post("/api/login", LoginController); // ? Send username password, return whole ownerprofile, and JWT save into localstorage
+
+  // POST   /api/ownerprofile     -> Protected. Send JWT in body. Checks JWT, use corresponding email from JWT to return whole ownerprofile
+  // POST   /api/editprofile      -> Protected. Send whole owner profileEdit profile    ( all fields, except ownerMatches). Returns full ownerprofile that was saved. +ownermatches
+  // GET    /api/view-pet         -> Return a number of owner profiles                  ( petname, petGender, petAge, areaLocation, petPicture[0] )
+  // GET    /api/view-pet:id      -> Return corresponding owner ID's (public profile) - ( petName, petGender, petAge, areaLocation, petPicture[], petDescription )
+
+  app.get("/api/protected", AuthCheck, protectedRoute); // Test route. AuthCheck the middleware can be placed on any of the routes that require a logged in user
+};
+
+main()
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

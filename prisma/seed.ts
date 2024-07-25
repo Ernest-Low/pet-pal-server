@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import argon2 from "argon2";
+
 const prisma = new PrismaClient();
 
 async function main() {
@@ -20,7 +22,7 @@ async function main() {
       petDescription: "Really good dog",
       petIsNeutered: true,
       email: "jack@example.com",
-      password: "password0",
+      password: await argon2.hash("password0"),
     },
   });
 
@@ -42,7 +44,7 @@ async function main() {
       petDescription: "Loves to play fetch",
       petIsNeutered: true,
       email: "john@example.com",
-      password: "password1",
+      password: await argon2.hash("password1"),
     },
   });
 
@@ -64,7 +66,7 @@ async function main() {
       petDescription: "Very friendly",
       petIsNeutered: false,
       email: "jane@example.com",
-      password: "password2",
+      password: await argon2.hash("password2"),
     },
   });
 
@@ -86,7 +88,7 @@ async function main() {
       petDescription: "Loves to swim",
       petIsNeutered: true,
       email: "alice@example.com",
-      password: "password3",
+      password: await argon2.hash("password3"),
     },
   });
 
@@ -108,7 +110,7 @@ async function main() {
       petDescription: "Very energetic",
       petIsNeutered: false,
       email: "bob@example.com",
-      password: "password4",
+      password: await argon2.hash("password4"),
     },
   });
 
@@ -129,7 +131,7 @@ async function main() {
       petDescription: "Loves to cuddle",
       petIsNeutered: true,
       email: "mary@example.com",
-      password: "password5",
+      password: await argon2.hash("password5"),
     },
   });
 
@@ -150,7 +152,7 @@ async function main() {
       petDescription: "Very protective",
       petIsNeutered: true,
       email: "michael@example.com",
-      password: "password6",
+      password: await argon2.hash("password6"),
     },
   });
 
@@ -171,7 +173,7 @@ async function main() {
       petDescription: "Very gentle",
       petIsNeutered: false,
       email: "susan@example.com",
-      password: "password7",
+      password: await argon2.hash("password7"),
     },
   });
 
@@ -193,7 +195,7 @@ async function main() {
       petDescription: "Very curious",
       petIsNeutered: true,
       email: "peter@example.com",
-      password: "password8",
+      password: await argon2.hash("password8"),
     },
   });
 
@@ -215,7 +217,7 @@ async function main() {
       petDescription: "Loves to run",
       petIsNeutered: false,
       email: "emma@example.com",
-      password: "password9",
+      password: await argon2.hash("password9"),
     },
   });
 
@@ -236,7 +238,7 @@ async function main() {
       petDescription: "Very playful",
       petIsNeutered: true,
       email: "oliver@example.com",
-      password: "password10",
+      password: await argon2.hash("password10"),
     },
   });
 }
