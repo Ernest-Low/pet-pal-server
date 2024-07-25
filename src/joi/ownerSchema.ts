@@ -1,6 +1,7 @@
 import Joi from "joi";
 
 export interface OwnerType {
+  ownerId: number;
   email: string;
   password: string;
   areaLocation: string;
@@ -17,6 +18,7 @@ export interface OwnerType {
 }
 
 export const ownerSchema: Joi.ObjectSchema<OwnerType> = Joi.object({
+  ownerId: Joi.number().optional(),
   email: Joi.string().email().max(100).required(),
   password: Joi.string().max(100).required(),
   areaLocation: Joi.string().max(100).required(),
