@@ -1,5 +1,5 @@
 import express, { Express } from "express";
-import { config } from "./config";
+import { config } from "../config/config";
 import prisma from "../prisma/db/prisma";
 import {
   LoginController,
@@ -8,11 +8,14 @@ import {
 } from "./controllers/Controllers";
 import AuthCheck from "./middleware/AuthCheck";
 import bodyParser from "body-parser";
+import cors from "cors";
+import corsOptions from "../config/corsOptions";
 
 const app: Express = express();
 
 // Middleware
 app.use(bodyParser.json());
+app.use(cors(corsOptions));
 
 app.listen(config.PORT, () => {
   console.log(`[server]: Server is running at http://localhost:${config.PORT}`);
