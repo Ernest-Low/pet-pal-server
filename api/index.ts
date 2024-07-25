@@ -5,8 +5,8 @@ import {
   LoginController,
   RegisterController,
   protectedRoute,
-} from "./controllers/Controllers";
-import AuthCheck from "./middleware/AuthCheck";
+} from "../src/controllers/Controllers";
+import AuthCheck from "../src/middleware/AuthCheck";
 import bodyParser from "body-parser";
 import cors from "cors";
 import corsOptions from "../config/corsOptions";
