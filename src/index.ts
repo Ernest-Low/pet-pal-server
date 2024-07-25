@@ -1,15 +1,15 @@
 import express, { Express, Request, Response } from "express";
-import { config } from "../config/config";
+import { config } from "./config/config";
 import prisma from "../prisma/db/prisma";
 import {
   LoginController,
   RegisterController,
   protectedRoute,
-} from "../src/controllers/Controllers";
-import AuthCheck from "../src/middleware/AuthCheck";
+} from "./controllers/Controllers";
+import AuthCheck from "./middleware/AuthCheck";
 import bodyParser from "body-parser";
 import cors from "cors";
-import corsOptions from "../config/corsOptions";
+import corsOptions from "./config/corsOptions";
 
 const app: Express = express();
 

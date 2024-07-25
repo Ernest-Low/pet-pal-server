@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
-import { config } from "../../config/config";
+import { config } from "../config/config";
 import prisma from "../../prisma/db/prisma";
 
 const secretKey = config.AUTH_KEY;
