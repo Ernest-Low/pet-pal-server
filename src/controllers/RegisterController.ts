@@ -27,7 +27,7 @@ const RegisterController = async (req: Request, res: Response) => {
 
     return res.status(400).json({
       status: "Validation failed",
-      errors: errorDetails,
+      payload: errorDetails,
     });
   }
 
