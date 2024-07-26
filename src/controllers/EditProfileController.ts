@@ -5,6 +5,15 @@ import { OwnerType, ownerSchema } from "../joi/ownerSchema";
 
 const EditProfileController = async (req: Request, res: Response) => {
   try {
+    const email = req.email?.email;
+    const { owner } = req.body;
+
+    if (!owner) {
+      return res
+        .status(400)
+        .json({ status: "Malformed request syntax, missing owner" });
+    }
+
     // Validate request body against the schema
     const { error, value } = ownerSchema.validate(req.body.owner, {
       abortEarly: false,
@@ -32,7 +41,6 @@ const EditProfileController = async (req: Request, res: Response) => {
     }
 
     // Verify if the owner exists
-    const email = req.email?.email;
     const verifyOwner = await prisma.owner.findUnique({
       where: {
         email,

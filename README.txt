@@ -40,4 +40,8 @@ Response: { payload: { length: number, page: number, totalPages: number, owners:
 
 GET - /api/view-pet/:id
 Request: Route Param :id
-Response: { payload: { owner: ownerobj }}                                             // ownerobj consists of: petName, petGender, petAge, areaLocation, petPicture[], petDescription, ownerId 
+Response: { payload: { owner: ownerobj }}                                             // ownerobj consists of: petName, petGender, petAge, areaLocation, petPicture[], petDescription, ownerId
+
+POST - /api/delete-profile
+Request: { jwtToken: JWT_TOKEN, password: string }
+Response: { status: "Account has been deleted" }                                      // For success cases

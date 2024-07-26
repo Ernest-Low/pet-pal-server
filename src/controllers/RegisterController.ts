@@ -6,8 +6,15 @@ import jwt from "jsonwebtoken";
 import { config } from "../config/config";
 
 const RegisterController = async (req: Request, res: Response) => {
+  const { owner } = req.body;
+  if (!owner) {
+    return res
+      .status(400)
+      .json({ status: "Malformed request syntax, missing owner" });
+  }
+
   // Validate request body against the schema
-  const { error, value } = ownerSchema.validate(req.body, {
+  const { error, value } = ownerSchema.validate(owner, {
     abortEarly: false,
   });
 
@@ -66,6 +73,8 @@ const RegisterController = async (req: Request, res: Response) => {
         password: await argon2.hash(password),
       },
     });
+
+    console.log("checking created ownerID: " + created.ownerId);
 
     const foundUser = await prisma.owner.findFirst({
       where: {
