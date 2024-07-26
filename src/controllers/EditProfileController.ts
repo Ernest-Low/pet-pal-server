@@ -38,13 +38,23 @@ const EditProfileController = async (req: Request, res: Response) => {
     // Verify if the owner exists
     const verifyOwner = await prisma.owner.findUnique({
       where: {
-        email,
+        ownerId: owner.ownerId,
       },
       select: { ownerId: true, password: true },
     });
 
     if (!verifyOwner) {
       return res.status(404).json({ status: "Owner not found" });
+    }
+
+    // Verify that new email address isn't taken
+    const verifyEmail = await prisma.owner.findUnique({
+      where: { email },
+      select: { ownerId: true },
+    });
+
+    if (verifyEmail && verifyEmail.ownerId !== verifyOwner.ownerId) {
+      return res.status(403).json({ status: "This email is already in use" });
     }
 
     // Create a new object for updated fields
