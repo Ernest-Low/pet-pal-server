@@ -4,6 +4,21 @@ import prisma from "../../prisma/db/prisma";
 import { registerOwner } from "../joi/ownerSchema";
 import jwt from "jsonwebtoken";
 import { config } from "../config/config";
+import cloudinary from "cloudinary";
+
+// Configure Cloudinary
+cloudinary.v2.config({
+  cloud_name: config.CLOUDINARY_CLOUD_NAME,
+  api_key: config.CLOUDINARY_API_KEY,
+  api_secret: config.CLOUDINARY_API_SECRET,
+});
+
+const uploadToCloudinary = async (base64: string, index: number) => {
+  return cloudinary.v2.uploader.upload(`data:image/jpeg;base64,${base64}`, {
+    folder: "petPictures",
+    public_id: `pet_${index}_${Date.now()}`,
+  });
+};
 
 const RegisterController = async (req: Request, res: Response) => {
   const { owner } = req.body;
@@ -13,22 +28,17 @@ const RegisterController = async (req: Request, res: Response) => {
       .json({ status: "Malformed request syntax, missing owner" });
   }
 
-  // Validate request body against the schema
-  const { error, value } = registerOwner.validate(owner, {
-    abortEarly: false,
-  });
+  const { error, value } = registerOwner.validate(owner, { abortEarly: false });
 
   if (error) {
-    // Create a detailed error response
     const errorDetails = error.details.map((err) => ({
-      field: err.path.join("."), // Use dot notation for nested fields
+      field: err.path.join("."),
       message: err.message,
     }));
 
-    return res.status(400).json({
-      status: "Validation failed",
-      payload: errorDetails,
-    });
+    return res
+      .status(400)
+      .json({ status: "Validation failed", payload: errorDetails });
   }
 
   const {
@@ -46,7 +56,6 @@ const RegisterController = async (req: Request, res: Response) => {
     petIsNeutered,
   } = value;
 
-  // Check if user already exists
   const foundUser = await prisma.owner.findFirst({
     where: { email },
     select: { email: true },
@@ -57,11 +66,17 @@ const RegisterController = async (req: Request, res: Response) => {
   }
 
   try {
+    const uploadPromises = petPicture.map((pic: string, index: number) =>
+      uploadToCloudinary(pic, index)
+    );
+    const uploadResults = await Promise.all(uploadPromises);
+    const petPictureUrls = uploadResults.map((result) => result.secure_url);
+
     const created = await prisma.owner.create({
       data: {
         areaLocation: areaLocation!,
         ownerName: ownerName!,
-        petPicture,
+        petPicture: petPictureUrls,
         petName: petName!,
         petBreed: petBreed!,
         petGender: petGender!,
@@ -74,17 +89,12 @@ const RegisterController = async (req: Request, res: Response) => {
       },
     });
 
-    // console.log("checking created ownerID: " + created.ownerId);
-
-    const foundUser = await prisma.owner.findFirst({
-      where: {
-        email,
-      },
-    });
+    const foundUser = await prisma.owner.findFirst({ where: { email } });
     const { password: _, ...resUser } = foundUser!;
     const token = jwt.sign({ email: email }, config.AUTH_KEY, {
       expiresIn: "1h",
     });
+
     res.status(201).json({
       status: "User registered successfully",
       payload: { jwtToken: token, owner: resUser },
