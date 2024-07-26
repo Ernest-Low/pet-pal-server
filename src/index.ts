@@ -32,7 +32,7 @@ const main = async () => {
     res.send("Express + TypeScript Server");
   });
 
-  app.post("/api/register", RegisterController); // ? Send Whole owner profile minus ownerMatches (don't save this in), return whole owner profile
+  app.post("/api/register", RegisterController); // ? Send Whole owner profile minus ownerMatches (don't save this in), return whole owner profile and JWT
   app.post("/api/login", LoginController); // ? Send email password, return whole ownerprofile, and JWT save into localstorage
   app.post("/api/owner-profile", AuthCheck, OwnerProfileController); // ? Send JWT in body. Checks JWT, use corresponding email from JWT to return whole ownerprofile
   app.post("/api/edit-profile", AuthCheck, EditProfileController); // ? Send whole owner profileEdit profile    ( all fields, except ownerMatches). Returns full ownerprofile that was saved. +ownermatches

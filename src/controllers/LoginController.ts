@@ -4,8 +4,6 @@ import jwt from "jsonwebtoken";
 import { config } from "../config/config";
 import prisma from "../../prisma/db/prisma";
 
-const secretKey = config.AUTH_KEY;
-
 const LoginController = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
@@ -29,7 +27,7 @@ const LoginController = async (req: Request, res: Response) => {
   try {
     const match = await argon2.verify(foundUser.password, password);
     if (match) {
-      const token = jwt.sign({ email: email }, secretKey, {
+      const token = jwt.sign({ email: email }, config.AUTH_KEY, {
         expiresIn: "1h",
       });
       const { password: _, ...resUser } = foundUser;

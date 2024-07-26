@@ -24,7 +24,7 @@ Response: { payload: { owner: ownerobj, jwtToken: JWT_TOKEN }}                  
 
 POST - /api/register
 Request: { owner: ownerobj }                                                          // No ownerID / ownerMatches in ownerobj
-Response: { payload: { owner: ownerobj }}                                             // No password in ownerobj
+Response: { payload: { jwtToken: JWT_TOKEN, owner: ownerobj }}                        // No password in ownerobj
 
 POST - /api/owner-profile
 Request: { jwtToken: JWT_TOKEN }

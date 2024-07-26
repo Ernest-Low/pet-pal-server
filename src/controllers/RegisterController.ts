@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import argon2 from "argon2";
 import prisma from "../../prisma/db/prisma";
 import { ownerSchema } from "../joi/ownerSchema";
+import jwt from "jsonwebtoken";
+import { config } from "../config/config";
 
 const RegisterController = async (req: Request, res: Response) => {
   // Validate request body against the schema
@@ -44,11 +46,11 @@ const RegisterController = async (req: Request, res: Response) => {
   });
 
   if (foundUser) {
-    return res.status(400).json({ status: "User already exists" });
+    return res.status(400).json({ status: "Email already in use" });
   }
 
   try {
-    await prisma.owner.create({
+    const created = await prisma.owner.create({
       data: {
         areaLocation: areaLocation!,
         ownerName: ownerName!,
@@ -71,12 +73,13 @@ const RegisterController = async (req: Request, res: Response) => {
       },
     });
     const { password: _, ...resUser } = foundUser!;
-    res
-      .status(201)
-      .json({
-        status: "User registered successfully",
-        payload: { owner: resUser },
-      });
+    const token = jwt.sign({ email: email }, config.AUTH_KEY, {
+      expiresIn: "1h",
+    });
+    res.status(201).json({
+      status: "User registered successfully",
+      payload: { jwtToken: token, owner: resUser },
+    });
   } catch (err) {
     console.error(err); // Log error for debugging
     res.status(500).json({ status: "Error registering user" });
