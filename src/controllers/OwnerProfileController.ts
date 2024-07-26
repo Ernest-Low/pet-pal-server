@@ -14,11 +14,10 @@ const OwnerProfileController = async (req: Request, res: Response) => {
   if (!foundOwner) {
     return res.status(404).json({ status: "Owner not found" });
   }
-  const { password: _, ...resOwner } = foundOwner;
 
   return res
     .status(200)
-    .json({ status: "Found owner", payload: { owner: resOwner } });
+    .json({ status: "Found owner", payload: { owner: foundOwner } });
 };
 
 export default OwnerProfileController;
