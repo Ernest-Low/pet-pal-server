@@ -5,7 +5,7 @@ import { editOwner } from "../joi/ownerSchema";
 
 const EditProfileController = async (req: Request, res: Response) => {
   try {
-    const email = req.email?.email;
+    // const email = req.email?.email;
     const { owner } = req.body;
 
     // ! Add another check to verify ownerid cant be messed with to pull wrong user
@@ -53,7 +53,7 @@ const EditProfileController = async (req: Request, res: Response) => {
 
     // Verify that new email address isn't taken
     const verifyEmail = await prisma.owner.findUnique({
-      where: { email },
+      where: { email: owner.email },
       select: { ownerId: true },
     });
 
@@ -101,7 +101,9 @@ const EditProfileController = async (req: Request, res: Response) => {
 
     // Add in the new desired password
     if (changePassword) {
-      owner.password = owner.newPassword;
+      updateData.password = owner.newPassword;
+      delete updateData.newPassword;
+      delete updateData.oldPassword;
     }
 
     // Update owner
