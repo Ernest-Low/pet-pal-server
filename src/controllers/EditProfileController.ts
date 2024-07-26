@@ -35,25 +35,37 @@ const EditProfileController = async (req: Request, res: Response) => {
 
     const ownerUpdates = value as OwnerType;
 
-    // Handle password separately
-    if (ownerUpdates.password) {
-      ownerUpdates.password = await argon2.hash(ownerUpdates.password);
-    }
-
     // Verify if the owner exists
     const verifyOwner = await prisma.owner.findUnique({
       where: {
         email,
       },
-      select: { ownerId: true },
+      select: { ownerId: true, password: true },
     });
 
     if (!verifyOwner) {
       return res.status(404).json({ status: "Owner not found" });
     }
 
+    // Create a new object for updated fields
+    const updatedFields: Partial<OwnerType> = { ...ownerUpdates };
+
+    // Handle password separately
+    if (updatedFields.password) {
+      const isPasswordValid = await argon2.verify(
+        verifyOwner.password,
+        updatedFields.password
+      );
+
+      if (!isPasswordValid) {
+        updatedFields.password = await argon2.hash(updatedFields.password);
+      } else {
+        delete updatedFields.password; // Passwords match, no need to update
+      }
+    }
+
     // Exclude non-editable fields
-    const { ownerId, ownerMatches, ...updateData } = ownerUpdates;
+    const { ownerId, ownerMatches, ...updateData } = updatedFields;
 
     // Update owner
     const updatedOwner = await prisma.owner.update({
