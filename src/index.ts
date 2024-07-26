@@ -20,7 +20,8 @@ import ErrorHandling from "./middleware/ErrorHandling";
 const app: Express = express();
 
 // Middleware
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 app.use(cors(corsOptions));
 app.use(ErrorHandling);
 

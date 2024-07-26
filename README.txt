@@ -2,7 +2,8 @@ Server for react-pet-pal project for NTU SCTP Project 1
 Not a requirement for the project but I wanted to make one
 
 Stack / Dependencies:
-NodeJS, Typescript, Prisma, Express, argon2, joi, jsonwebtoken, cors, body-parser, dot-env
+NodeJS, Typescript, Prisma, Express, argon2, joi, jsonwebtoken, cors, body-parser, dot-env, cloudinary
+DB: PostgreSQL on RDS AWS
 
 JWT Stored in localstorage, not sure how to work out CORS with hosting websites + cookies
 Did not add a refresh token, default timeout 1h
