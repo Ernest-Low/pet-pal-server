@@ -5,6 +5,7 @@ import ViewPetsController from "./ViewPetsController";
 import ViewPetController from "./ViewPetController";
 import OwnerProfileController from "./OwnerProfileController";
 import EditProfileController from "./EditProfileController";
+import DeleteProfileController from "./DeleteProfileController";
 
 export {
   LoginController,
@@ -13,5 +14,6 @@ export {
   ViewPetsController,
   ViewPetController,
   OwnerProfileController,
-  EditProfileController
+  EditProfileController,
+  DeleteProfileController,
 };

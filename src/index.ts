@@ -9,6 +9,7 @@ import {
   ViewPetController,
   OwnerProfileController,
   EditProfileController,
+  DeleteProfileController,
 } from "./controllers/Controllers";
 import AuthCheck from "./middleware/AuthCheck";
 import bodyParser from "body-parser";
@@ -38,6 +39,7 @@ const main = async () => {
   app.post("/api/edit-profile", AuthCheck, EditProfileController); // ? Send whole owner profileEdit profile    ( all fields, except ownerMatches). Returns full ownerprofile that was saved. +ownermatches
   app.get("/api/view-pet", ViewPetsController); // ?  Return a number of owner profiles ( petname, petGender, petAge, areaLocation, petPicture[0] )
   app.get("/api/view-pet/:id", ViewPetController); // ? Return corresponding owner ID's (public profile) - ( petName, petGender, petAge, areaLocation, petPicture[], petDescription )
+  app.post("/api/delete-profile", AuthCheck, DeleteProfileController); // ? Send jwtToken and password - Deletes user from database, returns success
 
   app.post("/api/protected", AuthCheck, protectedRoute); // Route just to verify JWT validity
 };

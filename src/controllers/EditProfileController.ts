@@ -15,7 +15,7 @@ const EditProfileController = async (req: Request, res: Response) => {
     }
 
     // Validate request body against the schema
-    const { error, value } = ownerSchema.validate(req.body.owner, {
+    const { error, value } = ownerSchema.validate(owner, {
       abortEarly: false,
       allowUnknown: true, // Allow unknown keys to be ignored
     });
