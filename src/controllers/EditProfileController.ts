@@ -1,12 +1,16 @@
 import { Request, Response } from "express";
 import argon2 from "argon2";
 import prisma from "../../prisma/db/prisma";
-import { OwnerType, ownerSchema } from "../joi/ownerSchema";
+import { OwnerType, ownerSchemaP } from "../joi/ownerSchema";
 
 const EditProfileController = async (req: Request, res: Response) => {
   try {
     const email = req.email?.email;
     const { owner } = req.body;
+
+    // ! Add another check to verify ownerid cant be messed with to pull wrong user
+    // ? Ugh maybe thats why changing password asks for old password
+    // * This aint fixable in current interation likely, frontend gonna complain (No time)
 
     if (!owner) {
       return res
@@ -15,7 +19,7 @@ const EditProfileController = async (req: Request, res: Response) => {
     }
 
     // Validate request body against the schema
-    const { error, value } = ownerSchema.validate(owner, {
+    const { error, value } = ownerSchemaP.validate(owner, {
       abortEarly: false,
       allowUnknown: true, // Allow unknown keys to be ignored
     });
@@ -33,14 +37,14 @@ const EditProfileController = async (req: Request, res: Response) => {
       });
     }
 
-    const ownerUpdates = value as OwnerType;
+    // const ownerUpdates = value as OwnerType;
 
     // Verify if the owner exists
     const verifyOwner = await prisma.owner.findUnique({
       where: {
         ownerId: owner.ownerId,
       },
-      select: { ownerId: true, password: true },
+      select: { ownerId: true, password: true, email: true },
     });
 
     if (!verifyOwner) {
@@ -57,25 +61,48 @@ const EditProfileController = async (req: Request, res: Response) => {
       return res.status(403).json({ status: "This email is already in use" });
     }
 
-    // Create a new object for updated fields
-    const updatedFields: Partial<OwnerType> = { ...ownerUpdates };
-
-    // Handle password separately
-    if (updatedFields.password) {
-      const isPasswordValid = await argon2.verify(
-        verifyOwner.password,
-        updatedFields.password
-      );
-
-      if (!isPasswordValid) {
-        updatedFields.password = await argon2.hash(updatedFields.password);
+    let changePassword = false;
+    if (owner.oldPassword || owner.newPassword) {
+      if (owner.oldPassword && owner.newPassword) {
+        const match = await argon2.verify(
+          verifyOwner.password,
+          owner.oldPassword
+        );
+        if (!match) {
+          return res.status(401).json({ status: "Your old password is wrong" });
+        }
+        changePassword = true;
       } else {
-        delete updatedFields.password; // Passwords match, no need to update
+        return res.status(401).json({
+          status: "Must provide both old and new passwords to change password",
+        });
       }
     }
 
+    // // Create a new object for updated fields
+    // const updatedFields: Partial<OwnerType> = { ...ownerUpdates };
+
+    // // Handle password separately
+    // if (updatedFields.password) {
+    //   const isPasswordValid = await argon2.verify(
+    //     verifyOwner.password,
+    //     updatedFields.password
+    //   );
+
+    //   if (!isPasswordValid) {
+    //     updatedFields.password = await argon2.hash(updatedFields.password);
+    //   } else {
+    //     delete updatedFields.password; // Passwords match, no need to update
+    //   }
+    // }
+
     // Exclude non-editable fields
-    const { ownerId, ownerMatches, ...updateData } = updatedFields;
+    const { ownerId, ownerMatches, ...updateData } = owner;
+
+    // Add in the new desired password
+    if (changePassword) {
+      owner.password = owner.newPassword;
+    }
 
     // Update owner
     const updatedOwner = await prisma.owner.update({

@@ -33,3 +33,21 @@ export const ownerSchema: Joi.ObjectSchema<OwnerType> = Joi.object({
   ownerMatches: Joi.array().items(Joi.number()).optional(),
   petIsNeutered: Joi.boolean().required(),
 });
+
+
+export const ownerSchemaP: Joi.ObjectSchema<OwnerType> = Joi.object({
+  ownerId: Joi.number().optional(),
+  email: Joi.string().email().max(100).required(),
+  password: Joi.string().max(100).optional(),
+  areaLocation: Joi.string().max(100).required(),
+  ownerName: Joi.string().max(100).required(),
+  petPicture: Joi.array().items(Joi.string()).required(),
+  petName: Joi.string().max(100).required(),
+  petBreed: Joi.string().max(100).required(),
+  petGender: Joi.string().valid("Male", "Female").required(),
+  petAge: Joi.number().integer().positive().required(),
+  petSize: Joi.string().valid("Small", "Medium", "Large").required(),
+  petDescription: Joi.string().required(),
+  ownerMatches: Joi.array().items(Joi.number()).optional(),
+  petIsNeutered: Joi.boolean().required(),
+});

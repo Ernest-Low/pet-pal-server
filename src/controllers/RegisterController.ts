@@ -74,7 +74,7 @@ const RegisterController = async (req: Request, res: Response) => {
       },
     });
 
-    console.log("checking created ownerID: " + created.ownerId);
+    // console.log("checking created ownerID: " + created.ownerId);
 
     const foundUser = await prisma.owner.findFirst({
       where: {
