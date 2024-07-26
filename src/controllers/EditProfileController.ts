@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import argon2 from "argon2";
 import prisma from "../../prisma/db/prisma";
-import { OwnerType, ownerSchemaP } from "../joi/ownerSchema";
+import { editOwner } from "../joi/ownerSchema";
 
 const EditProfileController = async (req: Request, res: Response) => {
   try {
@@ -19,7 +19,7 @@ const EditProfileController = async (req: Request, res: Response) => {
     }
 
     // Validate request body against the schema
-    const { error, value } = ownerSchemaP.validate(owner, {
+    const { error, value } = editOwner.validate(owner, {
       abortEarly: false,
       allowUnknown: true, // Allow unknown keys to be ignored
     });

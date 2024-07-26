@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import argon2 from "argon2";
 import prisma from "../../prisma/db/prisma";
-import { ownerSchema } from "../joi/ownerSchema";
+import { registerOwner } from "../joi/ownerSchema";
 import jwt from "jsonwebtoken";
 import { config } from "../config/config";
 
@@ -14,7 +14,7 @@ const RegisterController = async (req: Request, res: Response) => {
   }
 
   // Validate request body against the schema
-  const { error, value } = ownerSchema.validate(owner, {
+  const { error, value } = registerOwner.validate(owner, {
     abortEarly: false,
   });
 

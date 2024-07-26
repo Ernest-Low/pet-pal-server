@@ -17,7 +17,7 @@ export interface OwnerType {
   petIsNeutered: boolean;
 }
 
-export const ownerSchema: Joi.ObjectSchema<OwnerType> = Joi.object({
+export const registerOwner: Joi.ObjectSchema<OwnerType> = Joi.object({
   ownerId: Joi.number().optional(),
   email: Joi.string().email().max(100).required(),
   password: Joi.string().max(100).required(),
@@ -35,8 +35,8 @@ export const ownerSchema: Joi.ObjectSchema<OwnerType> = Joi.object({
 });
 
 
-export const ownerSchemaP: Joi.ObjectSchema<OwnerType> = Joi.object({
-  ownerId: Joi.number().optional(),
+export const editOwner: Joi.ObjectSchema<OwnerType> = Joi.object({
+  ownerId: Joi.number().required(),
   email: Joi.string().email().max(100).required(),
   password: Joi.string().max(100).optional(),
   areaLocation: Joi.string().max(100).required(),
