@@ -4,6 +4,7 @@ const allowedOrigins = [
   "https://dexsjw.github.io/react-pet-pal/",
   "https://dexsjw.github.io/",
   "https://66a462864a43fca2280e7048--resonant-lily-81c514.netlify.app/",
+  "https://sctp-pet-pal.netlify.app/",
 ];
 
 export default allowedOrigins;
