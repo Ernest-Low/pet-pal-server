@@ -54,3 +54,6 @@ Response: Match Success:                { status: "Success, added match", payloa
           Match Success: Both Match:    { status: "Success, both matched", payload: { owner: ownerobj }}         // No password in ownerobj
 
 
+POST - /api/verify
+Request: { jwtToken: JWT_TOKEN }
+Response: { jwtToken: JWT_TOKEN, owner: ownerobj }                                                               // No password in ownerobj

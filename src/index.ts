@@ -4,12 +4,13 @@ import prisma from "../prisma/db/prisma";
 import {
   LoginController,
   RegisterController,
-  protectedRoute,
+  refreshToken,
   ViewPetsController,
   ViewPetController,
   OwnerProfileController,
   EditProfileController,
   DeleteProfileController,
+  MatchProfileController
 } from "./controllers/Controllers";
 import AuthCheck from "./middleware/AuthCheck";
 import bodyParser from "body-parser";
@@ -34,15 +35,16 @@ const main = async () => {
     res.send("Express + TypeScript Server");
   });
 
-  app.post("/api/register", RegisterController); // ? Send Whole owner profile minus ownerMatches (don't save this in), return whole owner profile and JWT
-  app.post("/api/login", LoginController); // ? Send email password, return whole ownerprofile, and JWT save into localstorage
-  app.post("/api/owner-profile", AuthCheck, OwnerProfileController); // ? Send JWT in body. Checks JWT, use corresponding email from JWT to return whole ownerprofile
-  app.post("/api/edit-profile", AuthCheck, EditProfileController); // ? Send whole owner profileEdit profile    ( all fields, except ownerMatches). Returns full ownerprofile that was saved. +ownermatches
+  app.post("/api/register", RegisterController); // ? Send Whole owner profile minus ownerMatches (don't save this in), return jwtToken and ownerobj (-password)
+  app.post("/api/login", LoginController); // ? Send email password, return jwtToken and ownerobj (-password)
+  app.post("/api/owner-profile", AuthCheck, OwnerProfileController); // ? Send jwtToken, returns ownerobj (-password)
+  app.post("/api/edit-profile", AuthCheck, EditProfileController); // ? Send ownerobj (password optional, -matches). Returns ownerobj (-password)
   app.get("/api/view-pet", ViewPetsController); // ?  Return a number of owner profiles ( petname, petGender, petAge, areaLocation, petPicture[0] )
   app.get("/api/view-pet/:id", ViewPetController); // ? Return corresponding owner ID's (public profile) - ( petName, petGender, petAge, areaLocation, petPicture[], petDescription )
   app.post("/api/delete-profile", AuthCheck, DeleteProfileController); // ? Send jwtToken and password - Deletes user from database, returns success
+  app.post("/api/match-profile", AuthCheck, MatchProfileController) // ? Send jwtToken and targetId, handles matching logic, returns success and ownerobj (-password)
 
-  app.post("/api/protected", AuthCheck, protectedRoute); // Route just to verify JWT validity
+  app.post("/api/verify", AuthCheck, refreshToken); // ? Send jwtToken, returns jwtToken and ownerobj (-password)
 };
 main()
   .then(async () => {

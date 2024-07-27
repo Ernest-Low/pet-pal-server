@@ -11,13 +11,10 @@ const LoginController = async (req: Request, res: Response) => {
     return res.status(400).json({ status: "Email and password are required" });
   }
 
-  const foundUser = await prisma.owner.findFirst({
+  const foundUser = await prisma.owner.findUnique({
     where: {
       email,
     },
-    // select: {
-    //   password: true,
-    // },
   });
 
   if (!foundUser) {
@@ -31,12 +28,10 @@ const LoginController = async (req: Request, res: Response) => {
         expiresIn: "1h",
       });
       const { password: _, ...resUser } = foundUser;
-      res
-        .status(200)
-        .json({
-          status: "Successfully logged in",
-          payload: { owner: resUser, jwtToken: token },
-        });
+      res.status(200).json({
+        status: "Successfully logged in",
+        payload: { owner: resUser, jwtToken: token },
+      });
     } else {
       res.status(400).json({ status: "Invalid email or password" });
     }
