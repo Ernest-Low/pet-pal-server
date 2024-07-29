@@ -5,7 +5,7 @@ Stack / Dependencies:
 NodeJS, Typescript, Prisma, Express, argon2, joi, jsonwebtoken, cors, body-parser, dot-env, cloudinary
 DB: PostgreSQL on RDS AWS
 
-JWT Stored in localstorage, not sure how to work out CORS with hosting websites + cookies
+No cookies unfortunately.
 Did not add a refresh token, default timeout 1h
 
 APIs
@@ -15,9 +15,12 @@ APIs
 /api/edit-profile
 /api/view-pet
 /api/view-pet/:id
+/api/delete-profile
+/api/match-profile
+/api/verify
 
 
-Responses come with a { status: "Success" } or the like
+Responses & Errors come with a { status: "Success" } or similar, or message for frontside error display.
 
 POST - /api/login
 Request : { email: string, password: string; }
@@ -53,7 +56,6 @@ Response: Match Success:                { status: "Success, added match", payloa
           Already matched: Remove Match { status: "Success, removed match", payload: { owner: ownerobj }}        // No password in ownerobj
           Match Success: Both Match:    { status: "Success, both matched", payload: { owner: ownerobj }}         // No password in ownerobj
 
-
 POST - /api/verify
 Request: { jwtToken: JWT_TOKEN }
-Response: { jwtToken: JWT_TOKEN, owner: ownerobj }                                                               // No password in ownerobj
+Response: { jwtToken: JWT_TOKEN, owner: ownerobj }                                                               // No password in ownerobj, JWT_TOKEN is refreshed
