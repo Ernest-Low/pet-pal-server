@@ -65,12 +65,17 @@ In this project, **Prisma** was a new ORM I worked with, and it provided a great
 ```
 
 **Response Body**
+
+```json
+
 {
 "payload": {
 "owner": "ownerobj", // No password in ownerobj
 "jwtToken": "JWT_TOKEN"
 }
 }
+
+```
 
 ### POST `/api/register`
 
